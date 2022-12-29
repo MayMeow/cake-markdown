@@ -19,7 +19,14 @@ class MarkdownHelper extends Helper
      */
     protected $_defaultConfig = [];
 
-    public function parse(string $text, bool $safeMode = false)
+    /**
+     * parse function
+     *
+     * @param string $text Source text in Markdown
+     * @param boolean $safeMode Whether the safemode will be turned on or off, Default is Off
+     * @return string
+     */
+    public function parse(string $text, bool $safeMode = false): string
     {
         $parsedown = new Parsedown();
         $parsedown->setSafeMode($safeMode);
