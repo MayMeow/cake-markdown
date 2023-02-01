@@ -28,8 +28,40 @@ class MarkdownHelper extends Helper
      */
     public function parse(string $text, bool $safeMode = false): string
     {
-        $parsedown = new Parsedown();
+        $parsedown = new class($this) extends Parsedown {
+            // Override the default behavior of Parsedown
+
+            public static function handleShortcode($pattern, $text, Helper $helper)
+            {
+                preg_match_all($pattern, $text, $matches);
+
+                foreach ($matches[0] as $key => $value) {
+                    try
+                    {
+                        if (isset($matches[2][$key])) {
+                            $response = $helper->getView()->Shortcodes->{$matches[1][$key]}($matches[3][$key]);
+                        }
+                        else {
+                            $response = $helper->getView()->Shortcodes->{$matches[1][$key]}();
+                        }
+                    } catch (\Exception $e) {
+                        throw new \Exception("Shortcode {$matches[1][$key]} not found");
+                    }
+
+                    if ($response) {
+                        $text = str_replace($value, $response, $text);
+                    }
+
+                    // $text = str_replace($value, sprintf("ShortcodeHelper->%s(%s)", $matches[1][$key], $matches[3][$key]), $text);
+                }
+                
+                return $text;
+            }
+        };
+
         $parsedown->setSafeMode($safeMode);
+        $text = $parsedown::handleShortcode('/{{< (\w+) (\w+)=\"(.*?)\" >}}/s', $text, $this);
+        $text = $parsedown::handleShortcode('/{{< (\w+) >}}/s', $text, $this);
 
         return $parsedown->text($text);
     }
