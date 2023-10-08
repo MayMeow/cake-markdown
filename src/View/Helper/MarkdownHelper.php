@@ -17,7 +17,7 @@ class MarkdownHelper extends Helper
      *
      * @var array<string, mixed>
      */
-    protected $_defaultConfig = [];
+    protected array $_defaultConfig = [];
 
     /**
      * parse function
