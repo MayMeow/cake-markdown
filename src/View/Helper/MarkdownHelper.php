@@ -13,13 +13,6 @@ use \Parsedown;
 class MarkdownHelper extends Helper
 {
     /**
-     * Default configuration.
-     *
-     * @var array<string, mixed>
-     */
-    protected array $_defaultConfig = [];
-
-    /**
      * parse function
      *
      * @param string $text Source text in Markdown
